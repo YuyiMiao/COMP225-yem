@@ -28,12 +28,12 @@ class SQLiteDbProvider {
         onCreate: (Database db, int version) async {
           await db.execute(
               "CREATE TABLE Emotion(""id INTEGER PRIMARY KEY,"
-                  "amount REAL,"
+                  "imageNo REAL,"
                   "date TEXT,"
-                  "category TEXT"")"
+                  "description TEXT"")"
           );
           await db.execute(
-              "INSERT INTO Emotion ('id', 'amount', 'date', 'category') values(?, ?, ?, ?)",
+              "INSERT INTO Emotion ('id', 'imageNo', 'date', 'description') values(?, ?, ?, ?)",
               [1, 1000, '2019-04-01 10:00:00', "Food"]
           );
         }
@@ -66,12 +66,12 @@ class SQLiteDbProvider {
     );
     var id = maxIdResult.first["last_inserted_id"];
     var result = await db.rawInsert(
-      "INSERT Into Emotion (id, amount, date, category)"
+      "INSERT Into Emotion (id, imageNo, date, description)"
           "VALUES (?,?,?,?)", [
-            id, emotion.amount, emotion.date.toString(), emotion.category
+            id, emotion.imageNo, emotion.date.toString(), emotion.description
       ]
     );
-    return Emotion(id, emotion.amount, emotion.date, emotion.category);
+    return Emotion(id, emotion.imageNo, emotion.date, emotion.description);
   }
 
   update(Emotion product) async {

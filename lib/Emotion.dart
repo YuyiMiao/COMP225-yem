@@ -2,30 +2,30 @@ import 'package:intl/intl.dart';
 
 class Emotion {
   final int id;
-  final double amount;
+  final double imageNo;
   final DateTime date;
-  final String category;
+  final String description;
 
   String get formattedDate {
     var formatter = new DateFormat('yyyy-MM-dd');
     return formatter.format(this.date);
   }
 
-  static final columns = ['id', 'amount', 'date', 'category'];
+  static final columns = ['id', 'imageNo', 'date', 'description'];
 
-  Emotion(this.id, this.amount, this.date, this.category);
+  Emotion(this.id, this.imageNo, this.date, this.description);
 
   factory Emotion.fromMap (Map<String, dynamic> data) {
     return Emotion(data['id'],
-        data['amount'],
+        data['imageNo'],
         DateTime.parse(data['date']),
-        data['category']);
+        data['description']);
   }
 
   Map<String, dynamic> toMap() => {
     "id": id,
-    "amount": amount,
+    "imageNo": imageNo,
     "date": date.toString(),
-    "category": category
+    "description": description
   };
 }

@@ -1,3 +1,4 @@
+import 'EmotionBox.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'EmotionListModel.dart';
@@ -62,12 +63,11 @@ class MyHomePage extends StatelessWidget {
                     )
                   ));
                 },
-                  leading: Icon(Icons.face),
-                  trailing: Icon(Icons.keyboard_arrow_right),
-                  title: Text(emotions.items[index].category + "  "+
-                  emotions.items[index].amount.toString() + "\n" +
-                  emotions.items[index].formattedDate,
-                  style: TextStyle(fontSize:  18, fontStyle: FontStyle.italic),))
+                  title: EmotionBox(
+                    date: emotions.items[index].formattedDate,
+                    description: emotions.items[index].description,
+                    image: emotions.items[index].imageNo,
+                  ))
                 );
               }
             },
@@ -115,16 +115,16 @@ class _FormPageState extends State<FormPage> {
   final EmotionListModel emotions;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
-  double _amount;
+  double _imageNo;
   DateTime _date;
-  String _category;
+  String _description;
 
   void _submit() {
     final form = formKey.currentState;
     if (form.validate()) {
       form.save();
-      if (this.id == 0) emotions.add(Emotion(0, _amount, _date, _category));
-      else emotions.update(Emotion(this.id, _amount, _date, _category));
+      if (this.id == 0) emotions.add(Emotion(0, _imageNo, _date, _description));
+      else emotions.update(Emotion(this.id, _imageNo, _date, _description));
       Navigator.pop(context);
     }
   }
@@ -139,6 +139,17 @@ class _FormPageState extends State<FormPage> {
         child: Form(
           key: formKey, child: Column(
           children: [
+            TextFormField(
+              style: TextStyle(fontSize: 22),
+              decoration: const InputDecoration(
+                  icon: const Icon(Icons.image),
+                  labelText: 'Number of the emoji',
+                  labelStyle: TextStyle(fontSize: 18)
+              ),
+              initialValue: id == 0 ? ''
+                  : emotions.byId(id).imageNo.toString(),
+              onSaved: (val) => _imageNo = double.parse(val),
+            ),
             TextFormField(
               style: TextStyle(fontSize: 22),
               decoration: const InputDecoration(
@@ -164,8 +175,8 @@ class _FormPageState extends State<FormPage> {
                   labelText: 'Words',
                   labelStyle: TextStyle(fontSize: 18)
               ),
-              onSaved: (val) => _category = val,
-              initialValue: id == 0 ? '' : emotions.byId(id).category.toString(),
+              onSaved: (val) => _description = val,
+              initialValue: id == 0 ? '' : emotions.byId(id).description.toString(),
             ),
             RaisedButton(
               onPressed: _submit,
