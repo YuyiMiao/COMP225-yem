@@ -1,3 +1,5 @@
+// import 'dart:html';
+
 import 'EmotionBox.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -129,6 +131,7 @@ class _FormPageState extends State<FormPage> {
     }
   }
   @override
+
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey, appBar: AppBar(
@@ -178,11 +181,83 @@ class _FormPageState extends State<FormPage> {
               onSaved: (val) => _description = val,
               initialValue: id == 0 ? '' : emotions.byId(id).description.toString(),
             ),
+            // Container(child: ConstrainedBox(
+            //   constraints: BoxConstraints.expand(),
+            //   child: FlatButton(
+            //     onPressed: null,
+            //     padding: EdgeInsets.all(0.0),
+            //     child: Image.asset('asset/appimages/angry.png'),
+            //   ),
+            // )),
+            IconButton(
+              icon: Image.asset('assets/appimages/happy.png'),
+              iconSize: 75,
+              onPressed: null,
+            ),
+            IconButton(
+              icon: Image.asset('assets/appimages/confused.png'),
+              iconSize: 75,
+              onPressed: null,
+            ),
+            IconButton(
+              icon: Image.asset('assets/appimages/anxious.png'),
+              iconSize: 75,
+              onPressed: null,
+            ),
+            IconButton(
+              icon: Image.asset('assets/appimages/meh.png'),
+              iconSize: 75,
+              onPressed: null,
+            ),
+            IconButton(
+              icon: Image.asset('assets/appimages/sad.png'),
+              iconSize: 75,
+              onPressed: null,
+            ),
+            IconButton(
+              icon: Image.asset('assets/appimages/angry.png'),
+              iconSize: 75,
+              onPressed: null,
+            ),
             RaisedButton(
               onPressed: _submit,
               child: new Text('Submit'),
             ),
           ],
+
+          //  key:formKey, child: Row(
+          // children:[
+          //     IconButton(
+          //       icon: Image.asset('assets/appimages/happy.png'),
+          //       iconSize: 100,
+          //       onPressed: null,
+          //     ),
+          //     IconButton(
+          //       icon: Image.asset('assets/appimages/confused.png'),
+          //       iconSize: 100,
+          //       onPressed: null,
+          //     ),
+          //     IconButton(
+          //       icon: Image.asset('assets/appimages/anxious.png'),
+          //       iconSize: 100,
+          //       onPressed: null,
+          //       ),
+          //     IconButton(
+          //       icon: Image.asset('assets/appimages/meh.png'),
+          //     iconSize: 100,
+          //     onPressed: null,
+          //     ),
+          //     IconButton(
+          //       icon: Image.asset('assets/appimages/sad.png'),
+          //     iconSize: 100,
+          //     onPressed: null,
+          //     ),
+          //     IconButton(
+          //       icon: Image.asset('assets/appimages/angry.png'),
+          //       iconSize: 100,
+          //       onPressed: null,
+          //     ),
+          //   ],
         ),
         ),
       ),
