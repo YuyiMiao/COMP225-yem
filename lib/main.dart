@@ -130,6 +130,27 @@ class _FormPageState extends State<FormPage> {
       Navigator.pop(context);
     }
   }
+
+  void _setAngry() {
+    emotions.update(Emotion(this.id, 1, _date, _description));
+  }
+  void _setAnxious() {
+    emotions.update(Emotion(this.id, 2, _date, _description));
+  }
+  void _setConfused() {
+    emotions.update(Emotion(this.id, 3, _date, _description));
+  }
+  void _setHappy() {
+    emotions.update(Emotion(this.id, 4, _date, _description));
+  }
+  void _setMeh() {
+    emotions.update(Emotion(this.id, 5, _date, _description));
+  }
+  void _setSad() {
+    emotions.update(Emotion(this.id, 6, _date, _description));
+  }
+
+
   @override
 
   Widget build(BuildContext context) {
@@ -181,86 +202,44 @@ class _FormPageState extends State<FormPage> {
               onSaved: (val) => _description = val,
               initialValue: id == 0 ? '' : emotions.byId(id).description.toString(),
             ),
-            // Container(child: ConstrainedBox(
-            //   constraints: BoxConstraints.expand(),
-            //   child: FlatButton(
-            //     onPressed: null,
-            //     padding: EdgeInsets.all(0.0),
-            //     child: Image.asset('asset/appimages/angry.png'),
-            //   ),
-            // )),
             IconButton(
               icon: Image.asset('assets/appimages/happy.png'),
               iconSize: 75,
-              onPressed: null,
+              onPressed: _setHappy,
             ),
             IconButton(
               icon: Image.asset('assets/appimages/confused.png'),
               iconSize: 75,
-              onPressed: null,
+              onPressed: _setConfused,
             ),
             IconButton(
               icon: Image.asset('assets/appimages/anxious.png'),
               iconSize: 75,
-              onPressed: null,
+              onPressed: _setAnxious,
             ),
             IconButton(
               icon: Image.asset('assets/appimages/meh.png'),
               iconSize: 75,
-              onPressed: null,
+              onPressed: _setMeh,
             ),
             IconButton(
               icon: Image.asset('assets/appimages/sad.png'),
               iconSize: 75,
-              onPressed: null,
+              onPressed: _setSad,
             ),
             IconButton(
               icon: Image.asset('assets/appimages/angry.png'),
               iconSize: 75,
-              onPressed: null,
+              onPressed: _setAngry,
             ),
             RaisedButton(
               onPressed: _submit,
               child: new Text('Submit'),
             ),
           ],
-
-          //  key:formKey, child: Row(
-          // children:[
-          //     IconButton(
-          //       icon: Image.asset('assets/appimages/happy.png'),
-          //       iconSize: 100,
-          //       onPressed: null,
-          //     ),
-          //     IconButton(
-          //       icon: Image.asset('assets/appimages/confused.png'),
-          //       iconSize: 100,
-          //       onPressed: null,
-          //     ),
-          //     IconButton(
-          //       icon: Image.asset('assets/appimages/anxious.png'),
-          //       iconSize: 100,
-          //       onPressed: null,
-          //       ),
-          //     IconButton(
-          //       icon: Image.asset('assets/appimages/meh.png'),
-          //     iconSize: 100,
-          //     onPressed: null,
-          //     ),
-          //     IconButton(
-          //       icon: Image.asset('assets/appimages/sad.png'),
-          //     iconSize: 100,
-          //     onPressed: null,
-          //     ),
-          //     IconButton(
-          //       icon: Image.asset('assets/appimages/angry.png'),
-          //       iconSize: 100,
-          //       onPressed: null,
-          //     ),
-          //   ],
-        ),
-        ),
-      ),
+    ),
+    ),
+    ),
     );
   }
 }
