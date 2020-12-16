@@ -8,16 +8,16 @@ import '../model/emotion.dart';
 import '../ui_ux/clipper_painter.dart';
 
 final List<String> imgList = [
-    'assets/emotions/1.png',
-    'assets/emotions/2.png',
-    'assets/emotions/3.png',
-    'assets/emotions/4.png',
-    'assets/emotions/angry.png',
-    'assets/emotions/anxious.png',
-    'assets/emotions/confused.png',
-    'assets/emotions/happy.png',
-    'assets/emotions/meh.png',
-    'assets/emotions/sad.png'
+  'assets/emotions/1.png',
+  'assets/emotions/2.png',
+  'assets/emotions/3.png',
+  'assets/emotions/4.png',
+  'assets/emotions/angry.png',
+  'assets/emotions/anxious.png',
+  'assets/emotions/confused.png',
+  'assets/emotions/happy.png',
+  'assets/emotions/meh.png',
+  'assets/emotions/sad.png'
 ];
 
 final List<String> emotionCorr = [
@@ -50,22 +50,34 @@ class _MyFormState extends State<MyForm> {
   double _imageNo;
   int _emotionNo = 0;
 
-  String _description;
+  String _description = emotionCorr[0];
   final formKey = GlobalKey<FormState>();
   final EmotionListModel emotions;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final int id;
+  final myController = TextEditingController();
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    myController.dispose();
+    super.dispose();
+  }
 
   void _submit() {
-    this._description = emotionCorr[_emotionNo];
+    this._description = myController.text;
     this._imageNo = this._emotionNo.toDouble() + 1.0;
-      emotions.add(Emotion(this.id, this._imageNo, this._date, this._description));
-      Navigator.pop(context);
+    if (this.id <=   emotions.items.last.id ) {
+      emotions.update(Emotion(this.id, this._imageNo, this._date, this._description));
+    } else {
+      emotions.add(
+          Emotion(this.id, this._imageNo, this._date, this._description));
+    }
+    Navigator.pop(context);
   }
+
 
   @override
   Widget build(BuildContext context) {
-
     final recordFeeling = new Material(
       color: Colors.transparent,
       child: new Column(
@@ -73,11 +85,11 @@ class _MyFormState extends State<MyForm> {
         children: <Widget>[
           Center (
             child: const Text('Record how you feel:',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 20.0,
-                fontWeight: FontWeight.w500,
-              )),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w500,
+                )),
           ),
           CarouselSlider(
             carouselController: buttonCarouselController,
@@ -87,9 +99,9 @@ class _MyFormState extends State<MyForm> {
               autoPlay: false,
               aspectRatio: 2.0,
               enlargeCenterPage: true,
-                onPageChanged: (index, reason) {
-                  _emotionNo = index;
-                },
+              onPageChanged: (index, reason) {
+                _emotionNo = index;
+              },
             ),
             items: imageSliders,
           ),
@@ -113,7 +125,7 @@ class _MyFormState extends State<MyForm> {
                     height: 10.0,
                     child: RaisedButton(
                       onPressed: () => buttonCarouselController.nextPage(
-                        duration: Duration(milliseconds: 300), curve: Curves.linear),
+                          duration: Duration(milliseconds: 300), curve: Curves.linear),
                       child: Text("->"),
                       color: Colors.brown,
                       textColor: Colors.white,
@@ -126,7 +138,6 @@ class _MyFormState extends State<MyForm> {
       ),
     );
 
-
     final recordDate = new Material(
       color: Colors.transparent,
       child: new Column(
@@ -134,68 +145,119 @@ class _MyFormState extends State<MyForm> {
         children: <Widget>[
           Center(
             child: const Text('Date of entry:',
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 20.0,
-                fontWeight: FontWeight.w500,
-              )),
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w500,
+                )),
           ),
           const Padding(
             padding: EdgeInsets.only(bottom: 5.0),
           ),
           CupertinoDateTextBox(
               initialValue: _date,
-              onDateChange: dateChange,
+              // maximumDate: DateTime.now(),
+              onDateChange: (recordDate) {
+                setState(() {
+                  _date = recordDate;
+                });
+              },
               hintText: DateFormat.yMd().format(_date)),
         ],
       ),
     );
 
-    return new Scaffold(
-      body: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 100, 20, 0),
-          child: Column(children: <Widget>[
-            recordFeeling,
-            const SizedBox(height: 15.0),
-            recordDate,
-            Center(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  ButtonTheme(
-                      minWidth: 30.0,
-                      height: 10.0,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text('Return'),
-                      ),
-                  ),
-                  ButtonTheme(
-                    minWidth: 30.0,
-                    height: 10.0,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _submit();
-                      },
-                      child: Text('Submit'),
-                    ),
-                  ),
-                ],
+    final recordNote = new Material(
+      color: Colors.transparent,
+      child: new Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Padding(
+            padding: EdgeInsets.only(bottom: 5.0),
+          ),
+          Center(
+            child: const Text('Extra note:',
+                style: TextStyle(
+                  color: Colors.black,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.w500,
+                )),
+          ),
+          const Padding(
+            padding: EdgeInsets.only(bottom: 5.0),
+          ),
+          Center(
+            child: Form(
+              child: TextFormField(
+                controller: myController,
               ),
             ),
-          ]
-          )
+          ),
+        ],
       ),
-
     );
-  }
 
-  void dateChange(DateTime recordDate) {
-    setState(() {
-      _date = recordDate;
-    });
+    final enterButton = new Material(
+      color: Colors.transparent,
+      child: new Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Padding(
+            padding: EdgeInsets.only(bottom: 5.0),
+          ),
+          Center(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                ButtonTheme(
+                  minWidth: 30.0,
+                  height: 10.0,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text('Return'),
+                  ),
+                ),
+                ButtonTheme(
+                  minWidth: 30.0,
+                  height: 10.0,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _submit();
+                    },
+                    child: Text('Submit'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
+    return new Scaffold(
+        backgroundColor: Colors.white,
+        body: Stack(children: <Widget>[
+          StripsWidget(
+            color1:Colors.green[100],
+            color2:Colors.green[50],
+            gap: 100,
+            noOfStrips: 12,
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 25, 20, 0),
+            child: Column(children: <Widget>[
+              recordFeeling,
+              recordDate,
+              recordNote,
+              enterButton
+            ]
+            ),
+          ),
+        ]
+        )
+    );
   }
 }
 
