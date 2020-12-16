@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import '../helper.dart';
 
 class EmotionBox extends StatelessWidget {
   EmotionBox({Key key, this.date, this.description, this.image, this.color}) :
         super(key: key);
   final String date;
   final String description;
-  final double image;
+  final int image;
   final Color color;
 
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class EmotionBox extends StatelessWidget {
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  Image.asset("assets/appimages/" + image.toInt().toString() + ".png"),
+                  Image.asset(MyHelper.emotionPath[image-1]),
                   Expanded(
                       child: Container(
                           padding: EdgeInsets.all(5),

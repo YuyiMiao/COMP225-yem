@@ -29,3 +29,4 @@ class Emotion {
     "description": description
   };
 }
+

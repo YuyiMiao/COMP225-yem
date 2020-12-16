@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'package:scoped_model/scoped_model.dart';
-import 'Emotion.dart';
-import 'SQLiteDbProvider.dart';
+import '../model/emotion.dart';
+import '../sqlite_db_provider.dart';
 
 class EmotionListModel extends Model {
   EmotionListModel() {

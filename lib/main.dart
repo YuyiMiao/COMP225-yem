@@ -1,17 +1,17 @@
-import 'package:cupertino_date_textbox/cupertino_date_textbox.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:intl/intl.dart';
-import 'model/emotion_box.dart';
+import 'screen/rewind_screen.dart';
+import 'ui_ux/emotion_box.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'model/emotion_list_model.dart';
 import 'model/emotion.dart';
 import 'screen/form_screen.dart';
-import 'screen/training_screen.dart';
 import 'screen/general_screen.dart';
-import 'ui_ux/navbar.dart';
-import 'tone.dart';
+import 'ui_ux/nav_bar.dart';
+import 'helper.dart';
+import 'ui_ux/page_icon.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application
   @override
   Widget build(BuildContext context) {
+    //SystemChrome.setEnabledSystemUIOverlays([SystemUiOverlay.bottom]);
     return MaterialApp(
       title: 'Emotion',
       theme: ThemeData(
@@ -37,17 +38,6 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class HexColor extends Color {
-  HexColor(final String hexColor) : super(_getColorFromHex(hexColor));
-
-  static int _getColorFromHex(String hexColor) {
-    hexColor = hexColor.toUpperCase().replaceAll('#', '');
-    if (hexColor.length == 6) {
-      hexColor = 'FF' + hexColor;
-    }
-    return int.parse(hexColor, radix: 16);
-  }
-}
 class MyHome extends StatefulWidget {
   const MyHome({Key key}) : super(key: key);
 
@@ -60,9 +50,9 @@ class _MyHomeState extends State<MyHome>
   AnimationController animationController;
   bool multiple = true;
   List<TabIconData> tabIconsList = TabIconData.tabIconsList;
-
+  int id = 0;
   Widget tabBody = Container(
-    color: AppTheme.background,
+    color: Colors.white,
   );
 
   @override
@@ -74,22 +64,17 @@ class _MyHomeState extends State<MyHome>
 
     animationController = AnimationController(
         duration: const Duration(milliseconds: 600), vsync: this);
-    tabBody = MyForm(animationController: animationController);
+
+    tabBody =  MyGeneral(animationController : animationController,);
+
+
     super.initState();
-  }
-
-
-
-  @override
-  void dispose() {
-    animationController.dispose();
-    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppTheme.background,
+      color: Colors.white,
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: FutureBuilder<bool>(
@@ -116,6 +101,13 @@ class _MyHomeState extends State<MyHome>
     return true;
   }
 
+  void enterForm() {
+    tabIconsList[0].isSelected = true;
+    for(var i = 1; i <= 3; i++){
+      tabIconsList[i].isSelected = false;
+    }
+  }
+
   Widget bottomBar() {
     return Column(
       children: <Widget>[
@@ -125,33 +117,43 @@ class _MyHomeState extends State<MyHome>
         BottomBarView(
           tabIconsList: tabIconsList,
           addClick: () {
-            if (!mounted) {
-              return;
-            }
-            setState(() {
-              tabBody =
-                  MyForm(animationController: animationController);
+            animationController.reverse().then<dynamic>((data) {
+              if (!mounted) {
+                return;
+              }
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context)
+                => ScopedModelDescendant<EmotionListModel>(
+                    builder: (context, child, emotions) {
+                      return MyForm(id: id, emotions: emotions,);
+                    }
+                    )
+                ),
+              );
+           //   enterForm();
             });
           },
+
           changeIndex: (int index) {
-            if (index == 0 || index == 2) {
+            if (index == 0) {
               animationController.reverse().then<dynamic>((data) {
                 if (!mounted) {
                   return;
                 }
                 setState(() {
                   tabBody =
-                      MyForm(animationController: animationController);
+                      MyGeneral(animationController: animationController);
                 });
               });
-            } else if (index == 1 || index == 3) {
+            } else if (index == 1) {
               animationController.reverse().then<dynamic>((data) {
                 if (!mounted) {
                   return;
                 }
                 setState(() {
                   tabBody =
-                      MyForm(animationController: animationController);
+                      MyRewind(animationController: animationController);
                 });
               });
             }

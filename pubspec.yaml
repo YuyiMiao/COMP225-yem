@@ -18,7 +18,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.8.0 <3.0.0"
 
 dependencies:
   flutter:
@@ -27,6 +27,11 @@ dependencies:
   path_provider: ^0.5.0+1
   scoped_model: ^1.0.1
   intl: any
+  cupertino_date_textbox: ^1.0.0+3
+  polygon_clipper: ^1.0.2
+  carousel_slider: ^2.3.1
+  draggable_scrollbar: ^0.0.4
+
 
 
   # The following adds the Cupertino Icons font to your application.
@@ -48,16 +53,30 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
+
+  plugin:
+    androidPackage: com.popupbits.fluttercustomclippers
+
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/emotions/
+    - assets/fonts/
+
+
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/fonts/Montserrat-Bold.ttf
+        - asset: assets/fonts/Montserrat-ExtraBold.ttf
+        - asset: assets/fonts/Montserrat-Medium.ttf
+
+
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
-
-  assets:
-    - assets/appimages/1.png
-    - assets/appimages/2.png
-    - assets/appimages/3.png
-    - assets/appimages/4.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
