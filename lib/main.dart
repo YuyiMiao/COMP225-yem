@@ -1,17 +1,18 @@
-// import 'dart:html';
+import 'package:intl/intl.dart';
 
 import 'EmotionBox.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'EmotionListModel.dart';
 import 'Emotion.dart';
+import 'package:flutter/cupertino.dart';
 
 void main() {
   final emotions = EmotionListModel();
   runApp(
-    ScopedModel<EmotionListModel>(
-      model: emotions, child: MyApp(),
-    )
+      ScopedModel<EmotionListModel>(
+        model: emotions, child: MyApp(),
+      )
   );
 }
 
@@ -36,68 +37,68 @@ class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(this.title)),
-      body: ScopedModelDescendant<EmotionListModel>(
-        builder: (context, child, emotions) {
-          return ListView.separated(
-            itemCount: emotions.items == null ? 1: emotions.items.length + 1,
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return ListTile(title: Text("Please record your emotion!",
+        appBar: AppBar(title: Text(this.title)),
+        body: ScopedModelDescendant<EmotionListModel>(
+          builder: (context, child, emotions) {
+            return ListView.separated(
+              itemCount: emotions.items == null ? 1: emotions.items.length + 1,
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return ListTile(title: Text("Please record your emotion!",
                     style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),));
-              } else {
-                index = index - 1;
-                return Dismissible(key: Key(emotions.items[index].id.toString()),
-                onDismissed: (direction) {
-                  emotions.delete(emotions.items[index]);
-                  Scaffold.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Item with id, " +
-                      emotions.items[index].id.toString() +
-                        "is dismissed")
+                } else {
+                  index = index - 1;
+                  return Dismissible(key: Key(emotions.items[index].id.toString()),
+                      onDismissed: (direction) {
+                        emotions.delete(emotions.items[index]);
+                        Scaffold.of(context).showSnackBar(
+                            SnackBar(
+                                content: Text("Item with id, " +
+                                    emotions.items[index].id.toString() +
+                                    "is dismissed")
+                            )
+                        );
+                      },
+                      child: ListTile( onTap: (){
+                        Navigator.push(context, MaterialPageRoute(
+                            builder: (context) => FormPage(
+                              id: emotions.items[index].id, emotions: emotions,
+                            )
+                        ));
+                      },
+                          title: EmotionBox(
+                            date: emotions.items[index].formattedDate,
+                            description: emotions.items[index].description,
+                            image: emotions.items[index].imageNo,
+                          ))
+                  );
+                }
+              },
+              separatorBuilder: (context, index) {
+                return Divider();
+              },
+            );
+          },
+        ),
+        floatingActionButton: ScopedModelDescendant<EmotionListModel> (
+            builder: (context, child, emotion) {
+              return FloatingActionButton(
+                onPressed: () {
+                  Navigator.push(
+                      context, MaterialPageRoute(
+                      builder: (context)
+                      => ScopedModelDescendant<EmotionListModel>(
+                          builder: (context, child, emotions) {
+                            return FormPage(id: 0, emotions: emotions,);
+                          }
                       )
+                  )
                   );
                 },
-                child: ListTile( onTap: (){
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => FormPage(
-                      id: emotions.items[index].id, emotions: emotions,
-                    )
-                  ));
-                },
-                  title: EmotionBox(
-                    date: emotions.items[index].formattedDate,
-                    description: emotions.items[index].description,
-                    image: emotions.items[index].imageNo,
-                  ))
-                );
-              }
-            },
-            separatorBuilder: (context, index) {
-              return Divider();
-            },
-          );
-        },
-      ),
-      floatingActionButton: ScopedModelDescendant<EmotionListModel> (
-        builder: (context, child, emotion) {
-          return FloatingActionButton(
-            onPressed: () {
-              Navigator.push(
-                context, MaterialPageRoute(
-                builder: (context)
-                    => ScopedModelDescendant<EmotionListModel>(
-                      builder: (context, child, emotions) {
-                        return FormPage(id: 0, emotions: emotions,);
-                      }
-                    )
-                 )
+                tooltip: 'Increment', child: Icon(Icons.add),
               );
-            },
-            tooltip: 'Increment', child: Icon(Icons.add),
-          );
-        }
-      )
+            }
+        )
     );
   }
 }
@@ -120,39 +121,40 @@ class _FormPageState extends State<FormPage> {
   double _imageNo;
   DateTime _date;
   String _description;
+  List<bool> _buttonState = List.generate(6, (index) => false);
+
+  DateTime selectedDate = DateTime.now();
 
   void _submit() {
     final form = formKey.currentState;
+    int num = 0;
+    for(int i = 0; i < 6; i++){
+      if(_buttonState[i] == true){
+        num = i + 1;
+      }
+    }
     if (form.validate()) {
       form.save();
-      if (this.id == 0) emotions.add(Emotion(0, _imageNo, _date, _description));
-      else emotions.update(Emotion(this.id, _imageNo, _date, _description));
+      if (this.id == 0) emotions.add(Emotion(0, num.toDouble(), selectedDate, _description));
+      else emotions.update(Emotion(this.id, num.toDouble(), selectedDate, _description));
       Navigator.pop(context);
     }
   }
 
-  void _setAngry() {
-    emotions.update(Emotion(this.id, 1, _date, _description));
+  _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+      context: context,
+      initialDate: selectedDate, // Refer step 1
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2025),
+    );
+    if (picked != null && picked != selectedDate)
+      setState(() {
+        selectedDate = picked;
+      });
   }
-  void _setAnxious() {
-    emotions.update(Emotion(this.id, 2, _date, _description));
-  }
-  void _setConfused() {
-    emotions.update(Emotion(this.id, 3, _date, _description));
-  }
-  void _setHappy() {
-    emotions.update(Emotion(this.id, 4, _date, _description));
-  }
-  void _setMeh() {
-    emotions.update(Emotion(this.id, 5, _date, _description));
-  }
-  void _setSad() {
-    emotions.update(Emotion(this.id, 6, _date, _description));
-  }
-
 
   @override
-
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey, appBar: AppBar(
@@ -163,83 +165,60 @@ class _FormPageState extends State<FormPage> {
         child: Form(
           key: formKey, child: Column(
           children: [
-            TextFormField(
-              style: TextStyle(fontSize: 22),
-              decoration: const InputDecoration(
-                  icon: const Icon(Icons.image),
-                  labelText: 'Number of the emoji',
-                  labelStyle: TextStyle(fontSize: 18)
-              ),
-              initialValue: id == 0 ? ''
-                  : emotions.byId(id).imageNo.toString(),
-              onSaved: (val) => _imageNo = double.parse(val),
-            ),
-            TextFormField(
-              style: TextStyle(fontSize: 22),
-              decoration: const InputDecoration(
-                icon: const Icon(Icons.calendar_today),
-                hintText: 'Enter date',
-                labelText: 'Date',
-                labelStyle: TextStyle(fontSize: 18),
-              ),
-              validator: (val) {
-                Pattern pattern = r'^((?:19|20)\d\d)[- /.](0[1-9]|1[012])[- /.](0[1-9]|[12][0-9]|3[01])$';
-                RegExp regex = new RegExp(pattern);
-                if (!regex.hasMatch(val)) return 'Enter a valid date';
-                else return null;
+            ToggleButtons(
+              children: [
+                Image.asset("assets/appimages/1.png", height:55, width:55),
+                Image.asset("assets/appimages/2.png", height:55, width:55),
+                Image.asset("assets/appimages/3.png", height:55, width:55),
+                Image.asset("assets/appimages/4.png", height:55, width:55),
+                Image.asset("assets/appimages/5.png", height:55, width:55),
+                Image.asset("assets/appimages/6.png", height:55, width:55)
+              ],
+              isSelected: _buttonState,
+              selectedColor: Colors.greenAccent,
+              splashColor: Colors.teal,
+              selectedBorderColor: Colors.greenAccent,
+              borderWidth: 5,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+              onPressed: (int index) => {
+                setState(() {
+                  _buttonState[index] = !_buttonState[index];
+                  for(var i = 0; i <= 5;i++){
+                    if(i != index){_buttonState[i] = false;}
+                  }
+                })
               },
-              onSaved: (val) => _date = DateTime.parse(val),
-              initialValue: id == 0 ? '' : emotions.byId(id).formattedDate,
-              keyboardType: TextInputType.datetime,
+            ),
+            SizedBox(height: 20),
+            RaisedButton(
+              onPressed: () => _selectDate(context),
+              child: Text(
+                'Select The Date',
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 30),
+              ),
+              color: Colors.blue,
             ),
             TextFormField(
-              style: TextStyle(fontSize: 22),
+              style: TextStyle(fontSize: 20),
               decoration: const InputDecoration(
                   icon: const Icon(Icons.book),
                   labelText: 'Words',
-                  labelStyle: TextStyle(fontSize: 18)
+                  labelStyle: TextStyle(fontSize: 20)
               ),
               onSaved: (val) => _description = val,
               initialValue: id == 0 ? '' : emotions.byId(id).description.toString(),
             ),
-            IconButton(
-              icon: Image.asset('assets/appimages/happy.png'),
-              iconSize: 75,
-              onPressed: _setHappy,
-            ),
-            IconButton(
-              icon: Image.asset('assets/appimages/confused.png'),
-              iconSize: 75,
-              onPressed: _setConfused,
-            ),
-            IconButton(
-              icon: Image.asset('assets/appimages/anxious.png'),
-              iconSize: 75,
-              onPressed: _setAnxious,
-            ),
-            IconButton(
-              icon: Image.asset('assets/appimages/meh.png'),
-              iconSize: 75,
-              onPressed: _setMeh,
-            ),
-            IconButton(
-              icon: Image.asset('assets/appimages/sad.png'),
-              iconSize: 75,
-              onPressed: _setSad,
-            ),
-            IconButton(
-              icon: Image.asset('assets/appimages/angry.png'),
-              iconSize: 75,
-              onPressed: _setAngry,
-            ),
+            SizedBox(height: 20),
             RaisedButton(
               onPressed: _submit,
-              child: new Text('Submit'),
+              child:
+              new Text('Submit', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold,fontSize: 30)),
+              color: Colors.blue,
             ),
           ],
-    ),
-    ),
-    ),
+        ),
+        ),
+      ),
     );
   }
 }
